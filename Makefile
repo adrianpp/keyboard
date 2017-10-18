@@ -8,30 +8,21 @@ tmk_core:
 #check if we have dfu-programmer, and install local copy if not
 DFU_PROGRAMMER := $(shell command -v dfu-programmer 2> /dev/null)
 ifndef DFU_PROGRAMMER
-DFU_INSTALL_PATH=$(shell pwd)/dfu
-export PATH := $(DFU_INSTALL_PATH)/bin:$(PATH)
-$(DFU_INSTALL_PATH):
-	git clone https://github.com/dfu-programmer/dfu-programmer.git $(DFU_INSTALL_PATH)
-
-$(DFU_INSTALL_PATH)/Makefile: $(DFU_INSTALL_PATH)
-	cd $(DFU_INSTALL_PATH); ./bootstrap.sh; ./configure --prefix=$(DFU_INSTALL_PATH)
-
-$(DFU_INSTALL_PATH)/bin/dfu-programmer: $(DFU_INSTALL_PATH)/Makefile
-	make -C $(DFU_INSTALL_PATH)
-	make -C $(DFU_INSTALL_PATH) install
-
-check-dfu-programmer: $(DFU_INSTALL_PATH)/bin/dfu-programmer
+include dfu-programmer.mk
+check-dfu-programmer: install-dfu-programmer
 else
 check-dfu-programmer:
+remove-dfu-programmer:
 endif
 
-#check if we have avr-gcc, and fail if not
+#check if we have avr-gcc, and install local copy if not
 AVR_GCC := $(shell command -v avr-gcc 2> /dev/null)
 ifndef AVR_GCC
-check-avr-gcc:
-	$(error "avr-gcc is not available, please install!")
+include avr-gcc.mk
+check-avr-gcc: install-avr-gcc
 else
 check-avr-gcc:
+remove-avr-gcc:
 endif
 
 keyboard_build: tmk_core check-dfu-programmer check-avr-gcc
@@ -40,10 +31,7 @@ keyboard_build: tmk_core check-dfu-programmer check-avr-gcc
 clean:
 	make -C keyboard clean
 
-distclean:
-ifndef DFU_PROGRAMMER
-	rm -rf $(DFU_INSTALL_PATH)
-endif
+distclean: remove-dfu-programmer remove-avr-gcc
 	rm -rf tmk_core
 
 .PHONY : all setup check-dfu-programmer check-avr-gcc keyboard_build clean distclean
