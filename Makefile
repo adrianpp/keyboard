@@ -34,5 +34,5 @@ clean:
 distclean: remove-dfu-programmer remove-avr-gcc
 	rm -rf tmk_core
 
-.PHONY : all setup check-dfu-programmer check-avr-gcc keyboard_build clean distclean
+.PHONY : all setup check-dfu-programmer check-avr-gcc install-dfu-programmer install-avr-gcc remove-dfu-programmer remove-avr-gcc keyboard_build clean distclean
 
