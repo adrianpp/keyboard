@@ -8,19 +8,19 @@ tmk_core:
 #check if we have dfu-programmer, and install local copy if not
 DFU_PROGRAMMER := $(shell command -v dfu-programmer 2> /dev/null)
 ifndef DFU_PROGRAMMER
-DFU_INSTALL_LOCATION=$(shell pwd)/dfu
-export PATH := $(DFU_INSTALL_LOCATION)/bin:$(PATH)
-dfu-programmer:
-	git clone https://github.com/dfu-programmer/dfu-programmer.git
+DFU_INSTALL_PATH=$(shell pwd)/dfu
+export PATH := $(DFU_INSTALL_PATH)/bin:$(PATH)
+$(DFU_INSTALL_PATH):
+	git clone https://github.com/dfu-programmer/dfu-programmer.git $(DFU_INSTALL_PATH)
 
-dfu-programmer/Makefile: dfu-programmer
-	cd dfu-programmer; ./bootstrap.sh; ./configure --prefix=$(DFU_INSTALL_LOCATION)
+$(DFU_INSTALL_PATH)/Makefile: $(DFU_INSTALL_PATH)
+	cd $(DFU_INSTALL_PATH); ./bootstrap.sh; ./configure --prefix=$(DFU_INSTALL_PATH)
 
-$(DFU_INSTALL_LOCATION)/bin/dfu-programmer: dfu-programmer/Makefile
-	make -C dfu-programmer
-	make -C dfu-programmer install
+$(DFU_INSTALL_PATH)/bin/dfu-programmer: $(DFU_INSTALL_PATH)/Makefile
+	make -C $(DFU_INSTALL_PATH)
+	make -C $(DFU_INSTALL_PATH) install
 
-check-dfu-programmer: $(DFU_INSTALL_LOCATION)/bin/dfu-programmer
+check-dfu-programmer: $(DFU_INSTALL_PATH)/bin/dfu-programmer
 else
 check-dfu-programmer:
 endif
