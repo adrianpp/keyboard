@@ -42,8 +42,7 @@ clean:
 
 distclean:
 ifndef DFU_PROGRAMMER
-	rm -rf $(DFU_INSTALL_LOCATION)
-	rm -rf dfu-programmer
+	rm -rf $(DFU_INSTALL_PATH)
 endif
 	rm -rf tmk_core
 
