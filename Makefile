@@ -1,38 +1,36 @@
 all: setup keyboard_build
 
-setup: tmk_core check-dfu-programmer check-avr-gcc
+PROGRAMS=dfu-programmer avr-gcc
+
+setup: tmk_core $(foreach prog, $(PROGRAMS), check-$(prog))
 
 tmk_core:
 	git clone https://github.com/tmk/tmk_core.git
 
-#check if we have dfu-programmer, and install local copy if not
-DFU_PROGRAMMER := $(shell command -v dfu-programmer 2> /dev/null)
-ifndef DFU_PROGRAMMER
-include dfu-programmer.mk
-check-dfu-programmer: install-dfu-programmer
+#check if we have the required program, and include a makefile fragment to install it if we dont
+define CHECK_template
+CHECK_$(1) := $(shell command -v $(1) 2> /dev/null)
+ifndef CHECK_$(1)
+include $(1).mk
+check-$(1): install-$(1)
 else
-check-dfu-programmer:
-remove-dfu-programmer:
+check-$(1):
+install-$(1):
+remove-$(1):
 endif
+endef
 
-#check if we have avr-gcc, and install local copy if not
-AVR_GCC := $(shell command -v avr-gcc 2> /dev/null)
-ifndef AVR_GCC
-include avr-gcc.mk
-check-avr-gcc: install-avr-gcc
-else
-check-avr-gcc:
-remove-avr-gcc:
-endif
+#create the check for our required programs
+$(foreach prog, $(PROGRAMS), $(eval $(call CHECK_template,$(prog))))
 
-keyboard_build: tmk_core check-dfu-programmer check-avr-gcc
+keyboard_build: tmk_core $(foreach prog, $(PROGRAMS), check-$(prog))
 	make -C keyboard
 
 clean:
 	make -C keyboard clean
 
-distclean: remove-dfu-programmer remove-avr-gcc
+distclean: $(foreach prog, $(PROGRAMS), remove-$(prog))
 	rm -rf tmk_core
 
-.PHONY : all setup check-dfu-programmer check-avr-gcc install-dfu-programmer install-avr-gcc remove-dfu-programmer remove-avr-gcc keyboard_build clean distclean
+.PHONY : all setup keyboard_build clean distclean $(foreach prog, $(PROGRAMS), check-$(prog) install-$(prog) remove-$(prog))
 
