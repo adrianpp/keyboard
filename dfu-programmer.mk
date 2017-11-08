@@ -1,5 +1,6 @@
 DFU_INSTALL_PATH=$(shell pwd)/dfu
 export PATH := $(DFU_INSTALL_PATH)/bin:$(PATH)
+
 $(DFU_INSTALL_PATH):
 	git clone https://github.com/dfu-programmer/dfu-programmer.git $(DFU_INSTALL_PATH)
 
