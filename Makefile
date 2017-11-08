@@ -8,6 +8,7 @@ tmk_core:
 	git clone https://github.com/tmk/tmk_core.git
 
 #check if we have the required program, and include a makefile fragment to install it if we dont
+#makefile fragment must define install-NAME and remove-NAME rules
 define CHECK_template
 CHECK_$(1) := $(shell command -v $(1) 2> /dev/null)
 ifndef CHECK_$(1)
@@ -23,13 +24,15 @@ endef
 #create the check for our required programs
 $(foreach prog, $(PROGRAMS), $(eval $(call CHECK_template,$(prog))))
 
-keyboard_build: tmk_core $(foreach prog, $(PROGRAMS), check-$(prog))
-	make -C keyboard
+#pass along any make commands to the keyboard directory
+keyboard-%:
+	echo "making $*"; make -C keyboard $*
 
-clean:
-	make -C keyboard clean
+keyboard_build: setup keyboard-all
 
-distclean: $(foreach prog, $(PROGRAMS), remove-$(prog))
+clean: keyboard-clean
+
+distclean: clean $(foreach prog, $(PROGRAMS), remove-$(prog))
 	rm -rf tmk_core
 
 .PHONY : all setup keyboard_build clean distclean $(foreach prog, $(PROGRAMS), check-$(prog) install-$(prog) remove-$(prog))
