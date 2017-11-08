@@ -1,3 +1,12 @@
 *.swp
-tmk_core
-dfu
+tmk_core/
+dfu/
+keyboard/.dep/
+keyboard/obj_gh60_lufa/
+keyboard/*.eep
+keyboard/*.elf
+keyboard/*.hex
+keyboard/*.lss
+keyboard/*.map
+keyboard/*.sym
+
