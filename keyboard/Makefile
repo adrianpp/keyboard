@@ -52,10 +52,12 @@ SRC =	matrix.c \
 	led.c
 
 ifdef KEYMAP
-    SRC := keymap_$(KEYMAP).c $(SRC)
+    KEYMAP_SOURCE := keymaps/keymap_$(KEYMAP).c
 else
-    SRC := keymap_poker.c $(SRC)
+    KEYMAP_SOURCE := keymaps/keymap_poker.c
 endif
+
+SRC := $(KEYMAP_SOURCE) $(SRC)
 
 CONFIG_H = config.h
 
