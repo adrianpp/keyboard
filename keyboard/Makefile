@@ -131,6 +131,7 @@ NKRO_ENABLE = yes	# USB Nkey Rollover
 VPATH += $(TARGET_DIR)
 VPATH += $(TMK_DIR)
 
+#include $(TMK_DIR)/protocol/pjrc.mk
 include $(TMK_DIR)/protocol/lufa.mk
 include $(TMK_DIR)/common.mk
 include $(TMK_DIR)/rules.mk
