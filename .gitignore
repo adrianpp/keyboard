@@ -1,6 +1,7 @@
 *.swp
 tmk_core/
 dfu/
+avrgcc/
 keyboard/.dep/
 keyboard/obj_gh60_lufa/
 keyboard/*.eep
